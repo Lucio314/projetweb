@@ -36,7 +36,15 @@
             </div>
             <div class="form-group col-md-8">
                 <label for="date">date</label>
-                <input type="number" name="date" id="date" class="form-control">
+                <input type="date" name="date" id="date" class="form-control">
+            </div>
+            <div class="form-group col-md-8">
+                <label for="etat">etat</label>
+                <input type="text" name="etat" id="etat" class="form-control" value="bon">
+            </div>
+            <div class="form-group col-md-8">
+                <label for="numcli">numcli</label>
+                <input type="text" name="numcli" id="numcli" class="form-control" value=1>
             </div>
             <div>
                 <input style="" type="hidden" name="ref" value="{{ $produit->ref }}" class="form-control">
