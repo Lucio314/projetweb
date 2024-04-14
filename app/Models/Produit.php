@@ -22,6 +22,6 @@ class Produit extends Model
     }
     public function imageUrl()
     {
-        return Storage::url($this->imageprod);
+        return Storage::disk('public')->url($this->imageprod);
     }
 }

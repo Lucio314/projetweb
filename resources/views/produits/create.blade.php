@@ -3,7 +3,7 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <form action="{{ route('produits.update') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('produits.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <div class="form-group mb-3">

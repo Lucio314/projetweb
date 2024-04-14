@@ -87,7 +87,7 @@ class ProduitController extends Controller
     {
         $categories = Categorie::all();
         // Retourner la vue pour modifier les détails du produit
-        return view('produits.edit', compact('produit','categories'));
+        return view('produits.edit', compact('produit', 'categories'));
     }
 
     /**
@@ -97,12 +97,11 @@ class ProduitController extends Controller
     {
         // Valider les données d'entrée
         $validatedata = $request->validate([
-            'ref' => 'required|string|max:10|unique:produits,ref,' . $produit->id,
             'design' => 'required|string|max:255',
             'pu' => 'required|numeric',
             'code' => 'required|integer',
         ]);
-
+        $validatedata['ref'] = $produit->ref;
         // Mettre à jour le produit avec les nouvelles données validées
         $produit->update($validatedata);
 
