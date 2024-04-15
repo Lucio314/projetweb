@@ -6,6 +6,7 @@ use App\Models\Categorie;
 use App\Models\Produit;
 use App\Models\Inscription;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProduitController extends Controller
 {
@@ -51,25 +52,31 @@ class ProduitController extends Controller
      */
     public function store(Request $request)
     {
-        // Valider les données d'entrée
-        $validatedata = $request->validate([
+        // Validation de l'input
+        $validatedData = $request->validate([
             'ref' => 'required|string|max:10|unique:produits,ref',
             'design' => 'required|string|max:255',
             'pu' => 'required|numeric',
-            'imageprod' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'code' => 'required|integer',
+            'imageprod' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Validation de l'image
         ]);
-        // Traitement de l'image si elle est téléchargée
-        if ($request->hasFile('imageprod')) {
-            $imagePath = $request->file('imageprod')->store('images', 'public');
-            $validatedData['imageprod'] = $imagePath;
-        }
 
-        Produit::create($validatedata);
+        // Traiter l'upload de l'image
+        $imagePath = $request->file('imageprod')->store('images', 'public'); // Stocker l'image dans le dossier "images/produits"
 
-        // Rediriger vers l'index des produits avec un message de succès
+        // Créer le produit avec les données validées et le chemin de l'image
+        Produit::create([
+            'ref' => $request->input('ref'),
+            'design' => $request->input('design'),
+            'pu' => $request->input('pu'),
+            'code' => $request->input('code'),
+            'imageprod' => $imagePath,
+        ]);
+
+        // Rediriger vers la liste des produits avec un message de succès
         return redirect()->route('produits.index')->with('success', 'Produit créé avec succès');
     }
+
 
     /**
      * Display the specified resource.
@@ -96,14 +103,28 @@ class ProduitController extends Controller
     public function update(Request $request, Produit $produit)
     {
         // Valider les données d'entrée
-        $validatedata = $request->validate([
+        $validatedData = $request->validate([
             'design' => 'required|string|max:255',
             'pu' => 'required|numeric',
             'code' => 'required|integer',
+            'imageprod' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-        $validatedata['ref'] = $produit->ref;
+        dd($request->hasFile('imageprod'));  // Si une nouvelle image est téléchargée
+        if ($request->hasFile('imageprod')) {
+            // Supprimer l'ancienne image (si elle existe)
+            if ($produit->imageprod) {
+                Storage::disk('public')->delete('images/' . $produit->imageprod);
+            }
+
+            // Traiter l'upload de la nouvelle image
+            $imagePath = $request->file('imageprod')->store('images', 'public');
+
+            // Mettre à jour le chemin de l'image dans les données validées
+            $validatedData['imageprod'] = $imagePath;
+        }
+
         // Mettre à jour le produit avec les nouvelles données validées
-        $produit->update($validatedata);
+        $produit->update($validatedData);
 
         // Rediriger vers l'index des produits avec un message de succès
         return redirect()->route('produits.index')->with('success', 'Produit mis à jour avec succès');

@@ -21,7 +21,7 @@
 <!-- Affichage des produits -->
 <div style="display:flex; flex-wrap:wrap; justify-content:space-around; gap:2%">
     @foreach ($produits as $produit)
-    <div class="card mt-3" style="width: 300px; solid black; height: 200px; margin: 20px;">
+    <div class="card mt-3" >
         <div class="card-body">
             <img class="card-img-top" width="100%" height="200px" src="{{ $produit->imageUrl() }}"
                 alt="Image du produit">
